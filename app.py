@@ -61,6 +61,20 @@ T = {
     "research": {"EN": "🔬 Research Experience", "AR": "🔬 الخبرة البحثية"},
     "research_caption": {"EN": "Have you published or participated in any research?", "AR": "هل نشرت أو شاركت في أي بحث علمي؟"},
     "select_model": {"EN": "🤖 Select Prediction Model", "AR": "🤖 اختر موديل التنبؤ"},
+    "model_descriptions": {
+        "Linear Regression": {
+            "EN": "⚡ Simple & fast — finds a straight-line relationship between your scores and admission chance.",
+            "AR": "⚡ بسيط وسريع — يجد علاقة خطية بين درجاتك وفرصة القبول."
+        },
+        "Random Forest": {
+            "EN": "🌲 More accurate — combines hundreds of decision trees to give a better prediction.",
+            "AR": "🌲 أكثر دقة — يجمع مئات الأشجار لإعطاء تنبؤ أفضل."
+        },
+        "XGBoost": {
+            "EN": "🚀 Most powerful — advanced model used in top data science competitions.",
+            "AR": "🚀 الأقوى والأدق — نموذج متقدم يُستخدم في أفضل مسابقات علم البيانات."
+        }
+    },
     "predict_btn": {"EN": "🔮 Predict My Chances!", "AR": "🔮 توقع فرصتي!"},
     "tab1": {"EN": "📊 Data & Visualization", "AR": "📊 البيانات والتحليل"},
     "tab2": {"EN": "📈 Model Performance", "AR": "📈 أداء النموذج"},
@@ -214,6 +228,7 @@ st.sidebar.caption(t("research_caption"))
 st.sidebar.markdown("---")
 selected_model = st.sidebar.selectbox(t("select_model"),
     ["Linear Regression", "Random Forest", "XGBoost"])
+st.sidebar.caption(T["model_descriptions"][selected_model][lang])
 
 st.sidebar.markdown("---")
 predict_btn = st.sidebar.button(t("predict_btn"), use_container_width=True)
@@ -256,7 +271,6 @@ with tab1:
 with tab2:
     st.subheader(t("model_metrics"))
 
-    # جدول المقارنة
     comparison_df = pd.DataFrame({
         t("model_name"): list(model_results.keys()),
         t("mse"): [v["MSE"] for v in model_results.values()],
@@ -264,12 +278,10 @@ with tab2:
     })
     st.dataframe(comparison_df, use_container_width=True)
 
-    # أفضل موديل
     best = max(model_results, key=lambda x: model_results[x]["R2"])
     st.success(f"{t('best_model')}: **{best}** — R² = {model_results[best]['R2']}")
     st.info(t("r2_info"))
 
-    # شارت مقارنة R²
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("R² Score Comparison")
@@ -292,7 +304,6 @@ with tab2:
             ax6.text(i, v["MSE"] + 0.0001, str(v["MSE"]), ha='center', fontweight='bold')
         st.pyplot(fig6)
 
-    # Feature Importance
     st.subheader(t("feature_importance"))
     features = ["GRE Score", "TOEFL Score", "University Rating", "SOP", "LOR", "CGPA", "Research"]
 
@@ -319,7 +330,6 @@ with tab3:
                                 columns=["GRE Score", "TOEFL Score", "University Rating", "SOP", "LOR ", "CGPA", "Research"])
         student_scaled = scaler.transform(student)
 
-        # التنبؤ بالموديل المختار
         chance = trained_models[selected_model].predict(student_scaled)[0]
         chance = max(0, min(1, chance))
 
@@ -334,7 +344,6 @@ with tab3:
 
         st.progress(chance)
 
-        # مقارنة التنبؤات من كل الموديلات
         st.subheader("📊 All Models Prediction" if lang == "EN" else "📊 توقعات جميع النماذج")
         all_preds = {}
         for name, m in trained_models.items():
