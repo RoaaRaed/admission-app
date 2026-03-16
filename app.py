@@ -47,6 +47,33 @@ model, scaler, mse, r2 = train_model(data)
 st.sidebar.header("📋 Enter Student Information")
 
 st.sidebar.markdown("---")
+university = st.sidebar.selectbox("🏫 Target University", [
+    "MIT - Massachusetts Institute of Technology",
+    "Stanford University",
+    "Harvard University",
+    "University of California, Berkeley",
+    "Carnegie Mellon University",
+    "University of Toronto",
+    "University of Melbourne",
+    "National University of Singapore",
+    "Other"
+])
+st.sidebar.caption("Select the university you're applying to")
+
+st.sidebar.markdown("---")
+major = st.sidebar.selectbox("📚 Field of Study", [
+    "Computer Science & AI",
+    "Data Science & Statistics",
+    "Electrical Engineering",
+    "Mechanical Engineering",
+    "Business Administration (MBA)",
+    "Biomedical Sciences",
+    "Mathematics & Physics",
+    "Other"
+])
+st.sidebar.caption("Select your intended field of study")
+
+st.sidebar.markdown("---")
 gre = st.sidebar.slider("🎓 GRE Score (Graduate Record Examination)", 260, 340, 310)
 st.sidebar.caption("Standardized test for graduate school admissions — max 340")
 
@@ -55,7 +82,7 @@ toefl = st.sidebar.slider("🌍 TOEFL Score (English Proficiency Test)", 90, 120
 st.sidebar.caption("Test of English as a Foreign Language — max 120")
 
 st.sidebar.markdown("---")
-uni_rating = st.sidebar.selectbox("🏫 University Rating (1 = Low, 5 = High)", [1, 2, 3, 4, 5], index=2)
+uni_rating = st.sidebar.selectbox("⭐ University Rating (1 = Low, 5 = High)", [1, 2, 3, 4, 5], index=2)
 st.sidebar.caption("The prestige/ranking of the university you're applying to")
 
 st.sidebar.markdown("---")
@@ -154,6 +181,8 @@ with tab3:
         st.subheader("Your Profile Summary")
         summary = pd.DataFrame({
             "Factor": [
+                "Target University",
+                "Field of Study",
                 "GRE Score (Graduate Record Examination)",
                 "TOEFL Score (English Proficiency Test)",
                 "University Rating (1=Low, 5=High)",
@@ -162,7 +191,10 @@ with tab3:
                 "CGPA (Cumulative Grade Point Average)",
                 "Research Experience"
             ],
-            "Your Value": [gre, toefl, uni_rating, sop, lor, cgpa, "✅ Yes" if research else "❌ No"]
+            "Your Value": [
+                university, major, gre, toefl, uni_rating, sop, lor, cgpa,
+                "✅ Yes" if research else "❌ No"
+            ]
         })
         st.table(summary)
     else:
