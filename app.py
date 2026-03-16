@@ -8,44 +8,15 @@ from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# ==================== Custom CSS ====================
-st.markdown("""
-<style>
-    .main { background-color: #f8f9fa; }
-    .stApp { background-color: #f8f9fa; }
-    h1 { color: #1a3c6e !important; font-weight: 800 !important; }
-    h2, h3 { color: #1a3c6e !important; }
-    .stButton > button {
-        background-color: #1a3c6e !important;
-        color: white !important;
-        border-radius: 10px !important;
-        font-size: 16px !important;
-        padding: 10px !important;
-        border: none !important;
-    }
-    .stButton > button:hover {
-        background-color: #2a5298 !important;
-    }
-    .stTabs [data-baseweb="tab"] {
-        font-size: 16px !important;
-        font-weight: 600 !important;
-        color: #1a3c6e !important;
-    }
-    .stMetric {
-        background-color: white !important;
-        padding: 15px !important;
-        border-radius: 10px !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-    }
-    .stDataFrame { border-radius: 10px !important; }
-    .stSidebar { background-color: #eef2f7 !important; }
-    .stSelectbox, .stSlider { background-color: white !important; }
-</style>
-""", unsafe_allow_html=True)
-
 # ==================== Language ====================
 if "lang" not in st.session_state:
     st.session_state.lang = "EN"
+
+st.set_page_config(
+    page_title="University Admission Predictor",
+    page_icon="🎓",
+    layout="wide"
+)
 
 col_lang1, col_lang2 = st.columns([8, 1])
 with col_lang2:
@@ -201,17 +172,9 @@ T = {
 def t(key):
     return T[key][lang]
 
-# ==================== Page Config ====================
-st.set_page_config(
-    page_title="University Admission Predictor",
-    page_icon="🎓",
-    layout="wide"
-)
-
 # ==================== Header ====================
 st.title(t("title"))
 st.markdown(t("subtitle"))
-st.markdown("---")
 
 # ==================== Load Data ====================
 @st.cache_data
@@ -315,9 +278,7 @@ with tab1:
     with col1:
         st.subheader(t("cgpa_chart"))
         fig1, ax1 = plt.subplots(figsize=(6, 4))
-        fig1.patch.set_facecolor('#f8f9fa')
-        ax1.set_facecolor('#f8f9fa')
-        sns.scatterplot(x=data["CGPA"], y=data["Chance of Admit "], ax=ax1, color="#2a5298")
+        sns.scatterplot(x=data["CGPA"], y=data["Chance of Admit "], ax=ax1)
         X_cgpa = data[["CGPA"]]
         y_target = data["Chance of Admit "]
         m = LinearRegression().fit(X_cgpa, y_target)
@@ -329,17 +290,14 @@ with tab1:
     with col2:
         st.subheader(t("gre_chart"))
         fig2, ax2 = plt.subplots(figsize=(6, 4))
-        fig2.patch.set_facecolor('#f8f9fa')
-        ax2.set_facecolor('#f8f9fa')
-        sns.histplot(data["GRE Score"], bins=20, kde=True, ax=ax2, color="#2a5298")
+        sns.histplot(data["GRE Score"], bins=20, kde=True, ax=ax2)
         ax2.set_xlabel("GRE Score")
         ax2.set_ylabel("Number of Students")
         st.pyplot(fig2)
 
     st.subheader(t("heatmap"))
     fig3, ax3 = plt.subplots(figsize=(10, 6))
-    fig3.patch.set_facecolor('#f8f9fa')
-    sns.heatmap(data.corr(), annot=True, cmap="Blues", ax=ax3)
+    sns.heatmap(data.corr(), annot=True, cmap="coolwarm", ax=ax3)
     st.pyplot(fig3)
 
 # ---- Tab 2 ----
@@ -355,9 +313,7 @@ with tab2:
     coef_df = pd.DataFrame({"Feature": features, "Coefficient": model.coef_})
     coef_df = coef_df.sort_values("Coefficient", ascending=False)
     fig4, ax4 = plt.subplots(figsize=(8, 4))
-    fig4.patch.set_facecolor('#f8f9fa')
-    ax4.set_facecolor('#f8f9fa')
-    sns.barplot(x="Coefficient", y="Feature", data=coef_df, palette="Blues_r", ax=ax4)
+    sns.barplot(x="Coefficient", y="Feature", data=coef_df, palette="viridis", ax=ax4)
     st.pyplot(fig4)
 
 # ---- Tab 3 ----
